@@ -12,24 +12,21 @@ const createTaskController = async (
   next: NextFunction
 ) => {
   try {
-    const { description, endTime, recurrence, startTime, timezone, title } =
+    const { description, recurrence, startTime, timezone, title } =
       req.body as TaskValidationSchemaType;
 
     const nextOccurrence = calculateNextOccurrence({
       startTime,
       timezone,
-      recurrenceRule:
-        recurrence.cron_expression as unknown as unitOfTime.DurationConstructor, // Need to figure out the way to validate it.
+      recurrenceRule: recurrence as unknown as unitOfTime.DurationConstructor, // Need to figure out the way to validate it.
     });
 
     const startTimeUTC = moment.tz(startTime, timezone).utc().toDate();
-    const endTimeUTC = moment.tz(endTime, timezone).utc().toDate();
 
     const task = new Task({
       title,
       description,
       start_time: startTimeUTC,
-      end_time: endTimeUTC,
       timezone,
       recurrence,
       next_occurrence: nextOccurrence,

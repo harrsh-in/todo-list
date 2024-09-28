@@ -11,7 +11,7 @@ app.use(cors());
 const server = http.createServer(app);
 const io = new SocketIOServer(server);
 
-mongoose.connect("mongodb://localhost:27017/todo-list", {});
+mongoose.connect("mongodb://admin:admin@localhost:27017/todo-list");
 
 app.use(express.json());
 app.use("/api", router);

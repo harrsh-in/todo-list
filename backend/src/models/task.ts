@@ -4,7 +4,6 @@ export interface ITask extends Document {
   title: string;
   description: string;
   start_time: Date;
-  end_time: Date;
   timezone: string;
   recurrence: any;
   next_occurrence: Date;
@@ -24,10 +23,6 @@ const TaskSchema: Schema = new Schema({
     type: Date,
     required: true,
   },
-  end_time: {
-    type: Date,
-    required: true,
-  },
   timezone: {
     type: String,
     required: true,
@@ -43,6 +38,7 @@ const TaskSchema: Schema = new Schema({
   is_active: {
     type: Boolean,
     required: true,
+    default: true,
   },
   created_at: {
     type: Date,

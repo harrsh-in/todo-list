@@ -26,6 +26,8 @@ const validateRequestMiddleware = (schemas: {
 
       next();
     } catch (e) {
+      console.error(JSON.stringify(e, null, 2));
+
       if (e instanceof ZodError) {
         throw new Error(e.errors[0].message);
       }
