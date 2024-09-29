@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model task {
+  id              String           @id @default(uuid())
+  title           String
+  description     String
+  timezone        String
+  recurrence_type RecurrenceType?
+  recurrence_rule String?
+  user_id         String
+  // --- Timestamps ---
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+  // --- Relationships ---
+  notifications   notification[]
+  task_executions task_execution[]
+}
+
+model task_execution {
+  id                       String                    @id @default(uuid())
+  status                   TaskExecutionStatus       @default(PENDING)
+  // --- Timestamps ---
+  created_at               DateTime                  @default(now())
+  updated_at               DateTime                  @updatedAt
+  task_time                DateTime
+  completed_at             DateTime?
+  // --- Relationships ---
+  task                     task                      @relation(fields: [task_id], references: [id], onDelete: Cascade)
+  task_id                  String
+  task_execution_reminders task_execution_reminder[]
+}
+
+model task_execution_reminder {
+  id                String         @id @default(uuid())
+  value             Int
+  unit              String
+  // --- Timestamps ---
+  created_at        DateTime       @default(now())
+  updated_at        DateTime       @updatedAt
+  // --- Relationships ---
+  task_execution    task_execution @relation(fields: [task_execution_id], references: [id], onDelete: Cascade)
+  task_execution_id String
+}
+
+model notification {
+  id         String   @id @default(uuid())
+  userId     String
+  // --- Timestamps ---
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  notify_at  DateTime
+  // --- Relationships ---
+  task       task     @relation(fields: [task_id], references: [id], onDelete: Cascade)
+  task_id    String
+}
+
+enum RecurrenceType {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+  CUSTOM
+}
+
+enum TaskExecutionStatus {
+  PENDING
+  COMPLETED
+}
